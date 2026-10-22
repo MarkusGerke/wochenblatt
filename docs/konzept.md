@@ -36,7 +36,7 @@ Geschnitten wird am Satzende, nur im Notfall mitten im Satz mit „…“.
 
 ## Satz
 
-- **Nur zwei Schriften:** Fraktur (Unifraktur Maguntia) für Titel und Überschriften, Antiqua (Old Standard) für den Fließtext. Keine Versalien-Zeilen, keine Kursive; Rubriken gesperrt in der Akzentfarbe.
+- **Nur zwei Schriften:** Fraktur (Unifraktur Maguntia) für Titel und Überschriften, Antiqua (Old Standard) für den Fließtext. Keine Versalien-Zeilen, keine Kursive; Rubriken fett in der Akzentfarbe.
 - **Fraktur-Modus:** Auf Wunsch auch der Fließtext in Fraktur, mit langem ſ nach dem Regelwerk von [lang und rund](https://github.com/MarkusGerke/lang-und-rund). Die Wandlung passiert beim Bauen, nicht im Browser.
 - **Silbentrennung** beim Bauen mit festen Trennstellen – Browser trennen Wörter mit ſ nicht zuverlässig.
 - **Papier:** Pigmenteinschlüsse aus lang-und-rund als Hintergrund, abschaltbar.
