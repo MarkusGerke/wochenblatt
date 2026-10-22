@@ -397,7 +397,8 @@ em,i{font-style:normal}
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !eP.hidden){ panel(false); eK.focus(); } });
 
   /* Ausgaben-Navigation */
-  const ARCH = D.archiv || [], hier = ARCH.findIndex(x => x.nr === AUS.nr);
+  let ARCH = D.archiv || [];
+  if (D.webapp) fetch('archiv.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(x => { if (Array.isArray(x) && x.length){ ARCH = x; if (location.hash === '#archiv') zeigeArchiv(); } }).catch(() => {});
   function navLink(el, x, vor){
     if (x){ el.href = x.datei; el.textContent = vor ? `☜ Nr. ${x.nr}` : `Nr. ${x.nr} ☞`; el.removeAttribute('aria-disabled'); }
     else { el.removeAttribute('href'); el.setAttribute('aria-disabled', 'true'); el.textContent = vor ? '☜ Vorige' : 'Nächste ☞'; }
@@ -500,5 +501,7 @@ em,i{font-style:normal}
   addEventListener('resize', () => { if (innerWidth === letzteBreite) return; letzteBreite = innerWidth; clearTimeout(t); t = setTimeout(umbruch, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(umbruch);
   papier(); route();
+  // Web-App: letzte Ausgaben offline vorhalten (nur wenn über HTTPS ausgeliefert, z. B. per Tailscale Serve)
+  if (D.webapp && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>

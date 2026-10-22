@@ -47,7 +47,9 @@ Geschnitten wird am Satzende, nur im Notfall mitten im Satz mit „…“.
 - Einstellungen rechts oben: Schriftgröße (5 Stufen), Hell / Dunkel / Automatisch, Fraktur-Modus, Pigmente, Raster-Ansicht.
 - Links oben: Archiv mit allen Ausgaben (Nummer, Schlagzeile, Datum, Preis).
 - Detailseite mit Vorspann, vollem Text und Quellen.
-- Nur für eine Person: Die Ausgabe ist eine lokale HTML-Datei, unterwegs erreichbar über Tailscale Serve. Kein Hosting, kein Login.
+- Nur für eine Person: Die Ausgaben liegen als Web-App in einem Ordner auf dem Mac, unterwegs erreichbar über Tailscale Serve (HTTPS im eigenen Tailnet). Kein Hosting, kein Login.
+- Web-App auf dem Home-Bildschirm (iPhone, iPad) bzw. im Dock (Mac): eigenes Symbol, Start ohne Browserleisten, gelesene Ausgaben offline verfügbar. Einstellungen merkt sich jedes Gerät selbst.
+- `index.html` ist immer die neueste Ausgabe; `archiv.json` sammelt alle Ausgaben, Nummer und Jahrgang ergeben sich daraus.
 
 ## Ablauf
 
@@ -69,4 +71,4 @@ Nur der Bot läuft nach Uhrzeit; alle anderen reagieren auf das, was davor passi
 - `_redaktion.md` als Vorlage
 - die beiden Bot-Routinen (Recherche, Zustellung) als Prompts
 - Zählscript für `_interessen.md`
-- Wächter und Tailscale-Freigabe für macOS
+- Wächter (launchd) für macOS

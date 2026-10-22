@@ -5,10 +5,13 @@
   "description": "Eine persönliche, KI-recherchierte Wochenzeitung im Stil alter Zeitungen – Fraktur, ſ-Satz, Blocksatz.",
   "type": "module",
   "license": "MIT",
-  "engines": { "node": ">=22.18" },
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "beispiel": "node scripts/beispiel-erzeugen.mjs",
     "build": "node --import ./src/ts-loader.mjs src/build.mjs",
-    "build:beispiel": "npm run beispiel && npm run build"
+    "build:beispiel": "npm run beispiel && npm run build",
+    "serve": "node src/serve.mjs dist"
   }
 }

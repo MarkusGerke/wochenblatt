@@ -10,6 +10,7 @@ Wochenblatt/
 *.html
 !src/template.html
 *.png
+!src/webapp/icons/*.png
 *.jpg
 *.jpeg
 *.webp

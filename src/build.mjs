@@ -1,6 +1,6 @@
 // Baut eine Ausgabe des Wochenblatts:
 // Obsidian-Notizen → Verteilung auf die Kästen → ſ-Wandlung (lang & rund) → Silbentrennung → HTML
-import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { extrahierePapier } from './paper-extract.mjs';
@@ -10,17 +10,20 @@ const HIER = dirname(fileURLToPath(import.meta.url));
 // „lang und rund“ liegt standardmäßig neben diesem Repo: …/wochenblatt und …/lang-und-rund
 const LR = resolve(process.env.LR_REPO || join(HIER, '..', '..', 'lang-und-rund'));
 const AUSGABE_DIR = process.argv[2] || join(HIER, '..', 'beispiel', 'Wochenblatt', '2026-KW43');
-const OUT = process.argv[3] || join(HIER, '..', 'dist', 'wochenblatt.html');
+// Ziel: ein Ordner (Web-App mit Archiv, index.html = neueste Ausgabe) oder eine einzelne .html-Datei (Vorschau)
+const OUT = resolve(process.argv[3] || join(HIER, '..', 'dist'));
+const ORDNER = !OUT.endsWith('.html');
+const AUSGABE_ID = resolve(AUSGABE_DIR).split('/').pop();
 
 // Einstellungen der Ausgabe (später aus der Konfiguration)
 const CFG = {
   titel: 'Allgemeines Wochenblatt',
   untertitel: 'Zusammengetragen aus Nachrichten, Stimmen und Neuigkeiten der Woche',
-  nr: 1, jahrgang: 1, datum: 'Donnerstag, den 22. Oktober 2026', woche: '43. Woche',
   zeichenProToken: 4,          // grobe Schätzung für deutschen Text
   rechercheFaktor: 3,          // Annahme: Eingabe + Suche ≈ 3 × geschriebener Text
   euroProMioToken: 10,
-  tokenProBild: 1500,          // Annahme: ein Bild kostet etwa so viel wie 1.500 Token         // Annahme, später an echte Preise anpassen
+  tokenProBild: 1500,          // Annahme: ein Bild kostet etwa so viel wie 1.500 Token
+  // euroProMioToken und tokenProBild sind Annahmen – später an echte Preise anpassen
   plaetze: { haupt: 3, kurz: 8 },
 };
 
@@ -116,21 +119,90 @@ const preis = (tokenGesamt / 1e6) * CFG.euroProMioToken;
 const pfennig = Math.round(preis * 1.95583 * 100);   // amtlicher Umrechnungskurs 1 € = 1,95583 DM
 const fmt = (x, d = 0) => x.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
 
+// ---- 5. Datum, Nummer, Archiv ----
+function erscheinungsdatum() {
+  try {
+    const f = readFileSync(join(AUSGABE_DIR, '_fertig.md'), 'utf8').match(/^fertig:\s*(\d{4}-\d{2}-\d{2})/m);
+    if (f) return new Date(`${f[1]}T12:00:00`);
+  } catch {}
+  return new Date();
+}
+function isoWoche(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const tag = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - tag);
+  return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / 864e5 + 1) / 7);
+}
+const tagDatum = erscheinungsdatum();
+const wtag = tagDatum.toLocaleDateString('de-DE', { weekday: 'long' });
+const datum = `${wtag}, den ${tagDatum.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+const kw = Number((AUSGABE_ID.match(/KW(\d{1,2})/) || [])[1]) || isoWoche(tagDatum);
+const woche = `${kw}. Woche`;
+const datei = `${AUSGABE_ID}.html`;
+
+const archivPfad = join(ORDNER ? OUT : dirname(OUT), 'archiv.json');
+let archiv = [];
+if (ORDNER && existsSync(archivPfad)) { try { archiv = JSON.parse(readFileSync(archivPfad, 'utf8')); } catch {} }
+const alt = archiv.find((x) => x.id === AUSGABE_ID);
+const nr = alt ? alt.nr : archiv.reduce((m, x) => Math.max(m, x.nr), 0) + 1;
+const eintrag = { id: AUSGABE_ID, nr, datei, jahr: tagDatum.getFullYear(), datum, woche, pfennig: `${fmt(pfennig)} Pf.`, schlagzeile: toF(aufmacher.titel) };
+archiv = [eintrag, ...archiv.filter((x) => x.id !== AUSGABE_ID)].sort((a, b) => b.nr - a.nr);
+const jahrgang = tagDatum.getFullYear() - Math.min(...archiv.map((x) => x.jahr || tagDatum.getFullYear())) + 1;
+
 const WB = {
   stand: `${core.RULESET_STAND} · ${String(core.RULESET_FINGERPRINT).slice(0, 7)}`,
-  ausgabe: { untertitel: CFG.untertitel, nr: CFG.nr, jahrgang: CFG.jahrgang, datum: CFG.datum, woche: CFG.woche, preis: `${fmt(preis, 2)} €`, pfennig: `${fmt(pfennig)} Pf.`, token: fmt(tokenGesamt) },
+  ausgabe: { id: AUSGABE_ID, untertitel: CFG.untertitel, nr, jahrgang, datum, woche, preis: `${fmt(preis, 2)} €`, pfennig: `${fmt(pfennig)} Pf.`, token: fmt(tokenGesamt) },
   artikel,
-  // Neueste zuerst; später aus allen Ausgabe-Ordnern im Vault gesammelt
-  archiv: [{ nr: CFG.nr, datei: `${AUSGABE_DIR.split("/").pop()}.html`, datum: CFG.datum, woche: CFG.woche, pfennig: `${fmt(pfennig)} Pf.`, schlagzeile: toF(aufmacher.titel) }],
+  archiv,              // neueste zuerst; im Web-App-Betrieb lädt die Seite zusätzlich archiv.json nach
+  webapp: ORDNER,
 };
 
+// ---- 6. HTML schreiben ----
 const font = readFileSync(`${LR}/packages/extension/public/fonts/unifrakturmaguntia-historical.ttf`).toString('base64');
 const paper = extrahierePapier(`${LR}/packages/extension/src/shared/paperInclusions.ts`);
-let html = readFileSync(new URL('./template.html', import.meta.url), 'utf8');
+let html = readFileSync(join(HIER, 'template.html'), 'utf8');
 html = html.replace('__FONT_B64__', font).replace('/*__PAPER__*/', () => paper).replace('/*__DATA__*/', () => `window.WB=${JSON.stringify(WB)};`);
-mkdirSync(dirname(OUT), { recursive: true });
-writeFileSync(OUT, html);
-console.log(`${OUT}: ${fmt(html.length / 1024)} KB · ${notizen.length} Notizen`);
-console.log(`Aufmacher: ${aufmacher.rubrik} ${aufmacher.relevanz} · Haupt: ${haupt.map((n) => n.rubrik + ' ' + n.relevanz).join(', ')}`);
+
+if (ORDNER) {
+  // Vollständiges Dokument mit Web-App-Angaben für den Home-Bildschirm
+  const i = html.indexOf('<style>');
+  const kopf = html.slice(0, i), rest = html.slice(i);
+  html = `<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${kopf.trim()}
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wochenblatt">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1916" media="(prefers-color-scheme: dark)">
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+${rest}
+</body>
+</html>
+`;
+  mkdirSync(join(OUT, 'icons'), { recursive: true });
+  writeFileSync(join(OUT, datei), html);
+  writeFileSync(archivPfad, JSON.stringify(archiv, null, 2));
+  // index.html zeigt immer die neueste Ausgabe
+  const neueste = archiv[0];
+  copyFileSync(join(OUT, neueste.datei), join(OUT, 'index.html'));
+  // Web-App-Dateien
+  for (const f of ['manifest.webmanifest', 'sw.js']) copyFileSync(join(HIER, 'webapp', f), join(OUT, f));
+  for (const f of readdirSync(join(HIER, 'webapp', 'icons'))) copyFileSync(join(HIER, 'webapp', 'icons', f), join(OUT, 'icons', f));
+  console.log(`${join(OUT, datei)}: ${fmt(html.length / 1024)} KB · Nr. ${nr} · ${archiv.length} Ausgabe(n) im Archiv · index.html → ${neueste.datei}`);
+} else {
+  mkdirSync(dirname(OUT), { recursive: true });
+  writeFileSync(OUT, html);
+  console.log(`${OUT}: ${fmt(html.length / 1024)} KB`);
+}
+console.log(`${notizen.length} Notizen · Aufmacher: ${aufmacher.rubrik} ${aufmacher.relevanz} · Haupt: ${haupt.map((n) => n.rubrik + ' ' + n.relevanz).join(', ')}`);
 console.log(`Kurz: ${kurz.map((n) => n.rubrik + ' ' + n.relevanz).join(', ')} · ohne Platz: ${uebrig.length}`);
-console.log(`Preis ${WB.ausgabe.pfennig} = ${WB.ausgabe.preis} (${WB.ausgabe.token} Token geschätzt) · Stand ${WB.stand}`);
+console.log(`${datum} · ${woche} · Preis ${WB.ausgabe.pfennig} = ${WB.ausgabe.preis} (${WB.ausgabe.token} Token geschätzt) · Stand ${WB.stand}`);

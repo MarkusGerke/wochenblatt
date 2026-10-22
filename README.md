@@ -36,8 +36,19 @@ Liegt `lang-und-rund` woanders: `LR_REPO=/pfad/zu/lang-und-rund npm run build`.
 Eine eigene Ausgabe bauen:
 
 ```bash
-node --import ./src/ts-loader.mjs src/build.mjs <Ordner-mit-Notizen> <ziel.html>
+npm run build -- <Ordner-mit-Notizen> <Ausgaben-Ordner>    # Web-App: Ausgabe + Archiv, index.html = neueste
+npm run build -- <Ordner-mit-Notizen> <datei.html>         # nur eine einzelne Datei, z. B. zur Vorschau
 ```
+
+## Auf Mac, iPad und iPhone lesen
+
+Der Ausgaben-Ordner ist eine kleine Web-App: App-Symbol, Start ohne Browserleisten, die gelesenen Ausgaben bleiben offline verfügbar. Ausgeliefert wird sie nur ins eigene Tailscale-Netz – kein Hosting, kein Login.
+
+1. **Lokal ausliefern:** `node src/serve.mjs <Ausgaben-Ordner> 8043` (lauscht nur auf 127.0.0.1). Dauerhaft z. B. als launchd-Dienst.
+2. **Ins Tailscale-Netz freigeben:** In der Tailscale-Verwaltung unter *DNS* MagicDNS und HTTPS-Zertifikate einschalten, dann einmalig `tailscale serve --bg 8043`. Die Zeitung liegt danach unter `https://<gerät>.<tailnet>.ts.net/`.
+3. **Auf iPhone/iPad:** Tailscale-App verbinden (am besten mit „VPN On Demand“), Adresse in Safari öffnen, Teilen → „Zum Home-Bildschirm“. **Auf dem Mac:** Safari → Ablage → „Zum Dock hinzufügen“.
+
+Ein eigener kleiner Server statt `tailscale serve <ordner>`, weil das Freigeben von Ordnern unter macOS nicht in jeder Tailscale-Variante möglich ist.
 
 ## Eine Artikel-Notiz
 
@@ -78,6 +89,8 @@ Im Browser füllt die Seite jeden Kasten bis zur letzten Zeile: Große Kästen z
 | `src/template.html` | Layout, Raster, Einstellungen, Detail- und Archivseite |
 | `src/hyph.mjs` | Silbentrennung (Liang-Algorithmus) |
 | `src/paper-extract.mjs` | Pigmenteinschlüsse aus lang-und-rund für den Browser |
+| `src/serve.mjs` | Liefert den Ausgaben-Ordner lokal aus (für Tailscale Serve) |
+| `src/webapp/` | Manifest, Offline-Speicher (Service Worker) und App-Symbole |
 | `src/ts-loader.mjs` | Lädt die TypeScript-Quellen von lang-und-rund direkt in Node |
 | `scripts/beispiel-erzeugen.mjs` | Erzeugt Beispiel-Notizen mit Blindtext |
 | `docs/konzept.md` | Alle Entscheidungen und ihre Gründe |
