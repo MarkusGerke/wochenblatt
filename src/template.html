@@ -164,6 +164,10 @@ a{color:inherit}
 .feu-koerper>.text{flex:1 1 0;min-width:0}
 @media (max-width:719px){.feu-koerper{flex-direction:column}.feu-koerper>.bild{width:100%}}
 .detail .bild{max-width:760px;margin:0 auto 1.5rem}
+/* Ganze Blöcke klickbar */
+[data-ziel]{cursor:pointer}
+@media (hover:hover){[data-ziel]:hover h2 a,[data-ziel]:hover h3 a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.15em}
+  .kurz[data-ziel]:hover,.stimme[data-ziel]:hover,.box[data-ziel]:hover>.innen{background:color-mix(in srgb,var(--ink) 4%,transparent)}}
 </style>
 
 <nav class="leiste" aria-label="Ausgaben und Einstellungen">
@@ -257,7 +261,7 @@ a{color:inherit}
   const figur = a => `<figure class="bild"><canvas data-bild="${a.id}" width="3" height="2" role="img" aria-label="${a.bildunterschrift.replace(/"/g, '&quot;')}"></canvas>${a.bildunterschrift ? `<figcaption>${a.bildunterschrift}</figcaption>` : ''}</figure>`;
   const artikelKasten = (a, typ, area) => {
     const gross = typ === 'aufmacher' || typ === 'feuilleton';
-    return `<article class="box" data-typ="${typ}" style="grid-area:${area}">${etikett}<div class="innen">
+    return `<article class="box" data-typ="${typ}" data-ziel="${a.id}" style="grid-area:${area}">${etikett}<div class="innen">
       <p class="rubrik${gross ? ' mitte' : ''}">${a.rubrik}</p>
       <h2 class="${typ === 'aufmacher' ? 'mitte' : ''}"><a href="#${a.id}">${titel(a)}</a></h2>
       ${typ === 'aufmacher' ? `<p class="unter">${a.unter}</p><hr class="trenner">` : ''}
@@ -272,13 +276,17 @@ a{color:inherit}
   im('feuilleton').forEach(a => html += artikelKasten(a, 'feuilleton', 'feu'));
   html += `<aside class="box" data-typ="stimmen" style="grid-area:sti">${etikett}<div class="kasten">
     <h2 class="kopfzeile">Stimmen der Woche</h2>
-    ${im('stimme').map(a => `<div class="stimme"><a class="wer" href="#${a.id}">${a.wer}</a><div class="text" data-slot="${a.id}"></div></div>`).join('')}
+    ${im('stimme').map(a => `<div class="stimme" data-ziel="${a.id}"><a class="wer" href="#${a.id}">${a.wer}</a><div class="text" data-slot="${a.id}"></div></div>`).join('')}
   </div></aside>`;
   html += `<section class="box" data-typ="kurz" style="grid-area:kur">${etikett}<div class="innen">
     <h2 class="kopfzeile">Kurz notiert</h2><div class="kurzliste">
-    ${im('kurz').map(a => `<div class="kurz">${a.rubrik === 'Über den Tellerrand' ? '<p class="rubrik">Über den Tellerrand</p>' : ''}<h3><a href="#${a.id}">${titel(a)}</a></h3><div class="text" data-slot="${a.id}"></div></div>`).join('')}
+    ${im('kurz').map(a => `<div class="kurz" data-ziel="${a.id}">${a.rubrik === 'Über den Tellerrand' ? '<p class="rubrik">Über den Tellerrand</p>' : ''}<h3><a href="#${a.id}">${titel(a)}</a></h3><div class="text" data-slot="${a.id}"></div></div>`).join('')}
   </div></div></section>`;
   raster.insertAdjacentHTML('beforeend', html);
+  raster.addEventListener('click', e => {
+    if (e.target.closest('a') || (getSelection && String(getSelection()).length)) return;   // Links und Textauswahl normal behandeln
+    const z = e.target.closest('[data-ziel]'); if (z) location.hash = z.dataset.ziel;
+  });
   const boxes = [...raster.querySelectorAll('.box')];
   boxes.forEach(b => { b._slots = [...b.querySelectorAll('[data-slot]')].map(el => ({ el, a: byId[el.dataset.slot], n: 0 })); });
 
