@@ -40,7 +40,7 @@ a{color:inherit}
 .kopf h1{margin:0;font:400 3rem/1.05 var(--f-head);white-space:nowrap;overflow:hidden}
 .kopf h1 a{display:inline-block}
 .kopf h1 a{text-decoration:none}
-.kopf .zusatz{font:italic 1rem/1.3 var(--f-antiqua);color:var(--ink-soft);margin-top:.35rem;text-wrap:balance}
+.kopf .zusatz{font:1rem/1.3 var(--f-antiqua);color:var(--ink-soft);margin-top:.35rem;text-wrap:balance}
 
 .zeile{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.2rem 1rem;
   border-top:4px double var(--ink);border-bottom:1px solid var(--ink);padding:.35rem 0;
@@ -70,17 +70,17 @@ a{color:inherit}
 .text p{margin:0;text-indent:1.2em}.text p:first-child{text-indent:0}
 .spalten{columns:15em;column-gap:var(--gap);column-rule:1px solid var(--hair)}
 .fest .fuell{flex:1 1 0;min-height:0}
-.rubrik{font:italic 700 .9rem/1.1 var(--f-antiqua);letter-spacing:.08em;color:var(--accent);margin:0 0 .45rem}
+.rubrik{font:700 .85rem/1.1 var(--f-antiqua);letter-spacing:.14em;color:var(--accent);margin:0 0 .45rem}
 .box h2,.box h3{font-family:var(--f-head);font-weight:400;margin:0 0 .55rem;text-wrap:balance;line-height:1.08;font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
 .box h2 a,.box h3 a{text-decoration:none}
 .box h2 a:hover,.box h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.15em}
 .mitte{text-align:center}
 [data-typ="aufmacher"] h2{font-size:clamp(2rem,4.2vw,3.5rem)}
-.unter{font:italic 1.12rem/1.35 var(--f-antiqua);text-align:center;margin:0 auto .8rem;max-width:36em;text-wrap:balance}
+.unter{font:1.12rem/1.35 var(--f-antiqua);text-align:center;margin:0 auto .8rem;max-width:36em;text-wrap:balance}
 .trenner{border:0;border-top:1px solid var(--ink);width:4rem;margin:0 auto .9rem}
 [data-typ="haupt"] h2{font-size:1.75rem}
 [data-typ="feuilleton"] h2{font-size:1.65rem;text-align:center}
-.weiter{white-space:nowrap;color:var(--accent);text-decoration:none;font-style:italic;font-family:var(--f-antiqua);font-size:.95em}
+.weiter{white-space:nowrap;color:var(--accent);text-decoration:none;font-family:var(--f-antiqua);font-size:.95em}
 .weiter:hover{text-decoration:underline}
 
 .kasten{border:4px double var(--ink);padding:.8rem .95rem;flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column}
@@ -105,7 +105,7 @@ a{color:inherit}
 
 /* Detailseite */
 .detail{max-width:1080px;margin:0 auto}
-.zurueck{display:inline-block;font:italic .95rem var(--f-antiqua);color:var(--accent);text-decoration:none}
+.zurueck{display:inline-block;font:.95rem var(--f-antiqua);color:var(--accent);text-decoration:none}
 .zurueck:hover{text-decoration:underline}
 .detail header{text-align:center;border-bottom:1px solid var(--ink);padding:1rem 0;margin-bottom:1.5rem}
 .detail h2{font:400 clamp(2.2rem,6vw,4.2rem)/1.05 var(--f-head);margin:.2rem 0 .8rem;text-wrap:balance;font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
@@ -124,7 +124,7 @@ a{color:inherit}
 /* Leiste: links Ausgaben, rechts Einstellungen */
 .leiste{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:.5rem 1rem;padding-block:.7rem .2rem;font:.9rem/1.2 var(--f-antiqua)}
 .ausgaben{display:flex;gap:.2rem 1rem;flex-wrap:wrap;align-items:center}
-.nav{color:var(--ink);text-decoration:none;font-style:italic;white-space:nowrap}
+.nav{color:var(--ink);text-decoration:none;white-space:nowrap}
 .nav:hover{color:var(--accent);text-decoration:underline}
 .nav[aria-disabled="true"]{color:var(--hair);pointer-events:none}
 .einst{position:relative}
@@ -132,7 +132,7 @@ a{color:inherit}
 #e-knopf[aria-expanded="true"]{border-color:var(--ink)}
 .panel{position:absolute;right:0;top:calc(100% + .4rem);z-index:20;background:var(--paper);border:3px double var(--ink);padding:.6rem .75rem;display:grid;gap:.45rem;min-width:17rem;max-width:calc(100vw - 32px);box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .zeile2{display:flex;justify-content:space-between;align-items:center;gap:.75rem}
-.zeile2>span{font-style:italic;color:var(--ink-soft)}
+.zeile2>span{color:var(--ink-soft)}
 .knoepfe{display:flex;gap:.15rem}
 .panel button{font:inherit;color:var(--ink);background:none;border:1px solid transparent;border-radius:2px;padding:.3rem .45rem;cursor:pointer;min-width:2.2rem}
 .panel button:hover{border-color:var(--hair)}
@@ -144,7 +144,7 @@ a{color:inherit}
 /* Archiv */
 .archiv{max-width:860px;margin:0 auto}
 .archiv h2{font:400 clamp(2rem,5vw,3.2rem)/1.1 var(--f-head);text-align:center;margin:.5rem 0 .3rem}
-.archiv .jg{text-align:center;font-style:italic;color:var(--ink-soft);margin:0 0 1rem}
+.archiv .jg{text-align:center;color:var(--ink-soft);margin:0 0 1rem}
 .archiv ol{list-style:none;margin:0;padding:0;border-top:4px double var(--ink)}
 .archiv li{border-bottom:1px solid var(--hair)}
 .archiv li a{display:grid;grid-template-columns:3.6rem minmax(0,1fr) auto;gap:.2rem 1rem;padding:.75rem 0;text-decoration:none;align-items:baseline}
@@ -153,17 +153,18 @@ a{color:inherit}
 .archiv .sz{font:1.2rem/1.2 var(--f-head);font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
 .archiv .dt{grid-column:2;font-size:.85rem;color:var(--ink-soft)}
 .archiv .pr{grid-row:1/3;grid-column:3;font-size:.9rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
-.archiv .neu{font:italic .8rem var(--f-antiqua);color:var(--accent);margin-left:.4rem}
+.archiv .neu{font:.8rem var(--f-antiqua);color:var(--accent);margin-left:.4rem}
 /* Abbildungen: Holzstich auf Papier */
 .bild{margin:0 0 .9rem;display:flex;flex-direction:column;gap:.35rem;flex:none}
 .bild canvas{display:block;width:100%;height:auto;aspect-ratio:3/2;max-width:100%}
-.bild figcaption{font:italic .88rem/1.35 var(--f-antiqua);color:var(--ink-soft);text-align:center;text-wrap:balance}
+.bild figcaption{font:.88rem/1.35 var(--f-antiqua);color:var(--ink-soft);text-align:center;text-wrap:balance}
 .bild figcaption::before{content:"";display:block;width:2.5rem;border-top:1px solid var(--hair);margin:0 auto .3rem}
 .feu-koerper{display:flex;gap:var(--gap);min-height:0;flex:1 1 auto}
 .feu-koerper>.bild{width:calc((100% - 2 * var(--gap)) / 3);margin:0}
 .feu-koerper>.text{flex:1 1 0;min-width:0}
 @media (max-width:719px){.feu-koerper{flex-direction:column}.feu-koerper>.bild{width:100%}}
 .detail .bild{max-width:760px;margin:0 auto 1.5rem}
+em,i{font-style:normal}
 /* Ganze Blöcke klickbar */
 [data-ziel]{cursor:pointer}
 @media (hover:hover){[data-ziel]:hover h2 a,[data-ziel]:hover h3 a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.15em}
@@ -323,11 +324,19 @@ a{color:inherit}
     const f = h.clientWidth / z.offsetWidth;
     h.style.fontSize = Math.max(24, Math.floor(100 * f * 0.995)) + 'px';
   }
+  /* Überschriftgröße folgt der Textmenge: je größer die Fläche eines Kastens (die randvoll mit Text gefüllt wird), desto größer die Schlagzeile */
+  function titelGroessen(an){
+    const k = boxes.filter(b => b.dataset.ziel).map(b => ({ h: b.querySelector('h2'), f: b.offsetWidth * b.offsetHeight }));
+    if (!an){ k.forEach(x => x.h.style.fontSize = ''); return; }
+    const max = Math.max(...k.map(x => x.f));
+    k.forEach(x => { x.h.style.fontSize = (1.45 + 2.05 * x.f / max).toFixed(2) + 'rem'; });
+  }
   function umbruch(){
     titelBreite();
     if ($('deckblatt').hidden) return;
     const cols = spalten();
     raster.classList.remove('fest'); raster.style.height = ''; boxes.forEach(b => { b.style.height = ''; });
+    titelGroessen(false);
     boxes.forEach(b => setze(b, 0, true));
     if (cols === 6){
       // Seitenmodus: feste Seitenhöhe, alle Kästen randvoll; wächst, falls ein Kasten nicht einmal das Minimum fasst
@@ -335,6 +344,7 @@ a{color:inherit}
       let h = Math.round(raster.clientWidth * 0.95);
       for (let r = 0; r < 20; r++){
         raster.style.height = h + 'px';
+        titelGroessen(true);
         if (boxes.map(fuelle).every(Boolean)) break;
         h = Math.round(h * 1.08);
       }
@@ -343,6 +353,7 @@ a{color:inherit}
       const hoehen = boxes.map(b => b.offsetHeight);
       boxes.forEach((b, i) => { b.style.height = hoehen[i] + 'px'; });
       raster.classList.add('fest');
+      titelGroessen(true);
       boxes.forEach(b => { if (!fuelle(b)) setze(b, 0, true); });
     }
     etiketten(cols);
@@ -463,7 +474,7 @@ a{color:inherit}
       <div class="meta">Relevanz ${a.relevanz} · ${a.total} Wörter · ca. ${a.token.toLocaleString('de-DE')} Token (geschätzt)</div></header>
       ${a.bild ? figur(a) : ''}
       <div class="text spalten">${textHTML(a, a.total, false)}</div>
-      <div class="quellen"><em>Quellen:</em> ${a.quellen.map(leserlich).join(' · ') || '–'}</div>
+      <div class="quellen">Quellen: ${a.quellen.map(leserlich).join(' · ') || '–'}</div>
       <nav><a class="zurueck" href="#">☜ Zum Deckblatt</a><a class="zurueck" href="#${next.id}">Nächster Artikel ☞</a></nav>`;
     druckeBilder();
   }
