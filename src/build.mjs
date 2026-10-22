@@ -181,7 +181,9 @@ ${kopf.trim()}
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#eeeadf" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1a1916" media="(prefers-color-scheme: dark)">
-<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* iOS 26 legt unter der Statusleiste eine weiche Unschärfe über den Seitenrand – Bedienleiste darunter beginnen lassen */
+@supports (-webkit-touch-callout:none){.leiste{padding-top:calc(.7rem + 30px)}}</style>
 </head>
 <body>
 ${rest}
