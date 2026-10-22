@@ -254,6 +254,7 @@ em,i{font-style:normal}
     return out.map(p => `<p>${p}</p>`).join('');
   }
   const titel = a => a.titelF;   // Überschriften stehen immer in Fraktur
+  const tip = a => a.titelA.replace(/&/g, '&amp;').replace(/"/g, '&quot;');   // Tooltip: Überschrift in heutiger Schreibung
 
   /* Deckblatt aus der Verteilung des Bau-Scripts */
   const raster = $('raster');
@@ -264,7 +265,7 @@ em,i{font-style:normal}
     const gross = typ === 'aufmacher' || typ === 'feuilleton';
     return `<article class="box" data-typ="${typ}" data-ziel="${a.id}" style="grid-area:${area}">${etikett}<div class="innen">
       <p class="rubrik${gross ? ' mitte' : ''}">${a.rubrik}</p>
-      <h2 class="${typ === 'aufmacher' ? 'mitte' : ''}"><a href="#${a.id}">${titel(a)}</a></h2>
+      <h2 class="${typ === 'aufmacher' ? 'mitte' : ''}"><a href="#${a.id}" title="${tip(a)}">${titel(a)}</a></h2>
       ${typ === 'aufmacher' ? `<p class="unter">${a.unter}</p><hr class="trenner">` : ''}
       ${typ === 'aufmacher' && a.bild ? figur(a) : ''}
       ${typ === 'feuilleton' && a.bild
@@ -281,7 +282,7 @@ em,i{font-style:normal}
   </div></aside>`;
   html += `<section class="box" data-typ="kurz" style="grid-area:kur">${etikett}<div class="innen">
     <h2 class="kopfzeile">Kurz notiert</h2><div class="kurzliste">
-    ${im('kurz').map(a => `<div class="kurz" data-ziel="${a.id}">${a.rubrik === 'Über den Tellerrand' ? '<p class="rubrik">Über den Tellerrand</p>' : ''}<h3><a href="#${a.id}">${titel(a)}</a></h3><div class="text" data-slot="${a.id}"></div></div>`).join('')}
+    ${im('kurz').map(a => `<div class="kurz" data-ziel="${a.id}">${a.rubrik === 'Über den Tellerrand' ? '<p class="rubrik">Über den Tellerrand</p>' : ''}<h3><a href="#${a.id}" title="${tip(a)}">${titel(a)}</a></h3><div class="text" data-slot="${a.id}"></div></div>`).join('')}
   </div></div></section>`;
   raster.insertAdjacentHTML('beforeend', html);
   raster.addEventListener('click', e => {
@@ -470,7 +471,7 @@ em,i{font-style:normal}
   function zeigeDetail(a){
     const i = A.indexOf(a), next = A[(i + 1) % A.length];
     detail.innerHTML = `<a class="zurueck" href="#">☜ Zurück zum Deckblatt</a>
-      <header><p class="rubrik">${a.rubrik}</p><h2>${titel(a)}</h2><p class="unter">${a.unter}</p>
+      <header><p class="rubrik">${a.rubrik}</p><h2 title="${tip(a)}">${titel(a)}</h2><p class="unter">${a.unter}</p>
       <div class="meta">Relevanz ${a.relevanz} · ${a.total} Wörter · ca. ${a.token.toLocaleString('de-DE')} Token (geschätzt)</div></header>
       ${a.bild ? figur(a) : ''}
       <div class="text spalten">${textHTML(a, a.total, false)}</div>
