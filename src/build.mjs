@@ -19,7 +19,8 @@ const CFG = {
   nr: 1, jahrgang: 1, datum: 'Donnerstag, den 22. Oktober 2026', woche: '43. Woche',
   zeichenProToken: 4,          // grobe Schätzung für deutschen Text
   rechercheFaktor: 3,          // Annahme: Eingabe + Suche ≈ 3 × geschriebener Text
-  euroProMioToken: 10,         // Annahme, später an echte Preise anpassen
+  euroProMioToken: 10,
+  tokenProBild: 1500,          // Annahme: ein Bild kostet etwa so viel wie 1.500 Token         // Annahme, später an echte Preise anpassen
   plaetze: { haupt: 3, kurz: 8 },
 };
 
@@ -84,6 +85,16 @@ const satz = (s) => trenne(s, toF(s));
 const BOX = (n) => n === aufmacher ? 'aufmacher' : haupt.includes(n) ? 'haupt' : kurz.includes(n) ? 'kurz' : n === feu ? 'feuilleton' : stimmen.includes(n) ? 'stimme' : 'ohne';
 const MIN = { aufmacher: 40, haupt: 30, feuilleton: 40, kurz: 8, stimme: 8, ohne: 20 };
 const BASIS = { aufmacher: 200, haupt: 70, feuilleton: 150, kurz: 24, stimme: 18, ohne: 70 };
+// Bilder nur bei Aufmacher und Feuilleton; als data:-URI eingebettet, damit die Ausgabe eine einzige Datei bleibt
+const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
+let bilder = 0;
+function bildEinbetten(datei) {
+  if (!datei) return null;
+  const pfad = join(AUSGABE_DIR, String(datei));
+  const typ = MIME[String(datei).split('.').pop().toLowerCase()];
+  try { const b64 = readFileSync(pfad).toString('base64'); bilder++; return `data:${typ};base64,${b64}`; }
+  catch { console.warn(`Bild fehlt: ${pfad}`); return null; }
+}
 let i = 0;
 const artikel = [aufmacher, ...haupt, ...kurz, feu, ...stimmen, ...uebrig].filter(Boolean).map((n) => {
   const box = BOX(n), absaetze = n.absaetze.map(satz), kf = satz(n.kurzfassung || n.absaetze[0]);
@@ -94,11 +105,12 @@ const artikel = [aufmacher, ...haupt, ...kurz, feu, ...stimmen, ...uebrig].filte
     ka: kf.a, kf: kf.f, pa: absaetze.map((p) => p.a), pf: absaetze.map((p) => p.f),
     min: MIN[box], base: BASIS[box],
     token: Math.round(n.zeichen / CFG.zeichenProToken),
+    bild: bildEinbetten(n.bild), bildunterschrift: n.bildunterschrift || '',
   };
 });
 
 // ---- 4. Preis: geschätzt aus der Textmenge ----
-const tokenText = artikel.reduce((s, a) => s + a.token, 0);
+const tokenText = artikel.reduce((s, a) => s + a.token, 0) + bilder * CFG.tokenProBild;
 const tokenGesamt = tokenText * (1 + CFG.rechercheFaktor);
 const preis = (tokenGesamt / 1e6) * CFG.euroProMioToken;
 const pfennig = Math.round(preis * 1.95583 * 100);   // amtlicher Umrechnungskurs 1 € = 1,95583 DM

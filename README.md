@@ -57,6 +57,8 @@ Vorspann: das Wichtigste in 40–60 Wörtern.
 Restlicher Artikel …
 ```
 
+Optional bei Aufmacher und Feuilleton: `bild: "datei.png"` (im selben Ordner) und `bildunterschrift: "…"`. Die Seite druckt das Bild als Holzstich in Druckfarbe auf das Papier – Graustufen werden zu klaren Linien, im Dunkelmodus hell auf dunkel.
+
 Sonderfälle: `rubrik: "Stimmen der Woche"` (mit Feld `wer: "@account"`), `rubrik: "Feuilleton"` und `rubrik: "Über den Tellerrand"`.
 
 ## Was das Bau-Script macht

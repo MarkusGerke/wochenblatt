@@ -40,7 +40,7 @@ Geschnitten wird am Satzende, nur im Notfall mitten im Satz mit „…“.
 - **Fraktur-Modus:** Auf Wunsch auch der Fließtext in Fraktur, mit langem ſ nach dem Regelwerk von [lang und rund](https://github.com/MarkusGerke/lang-und-rund). Die Wandlung passiert beim Bauen, nicht im Browser.
 - **Silbentrennung** beim Bauen mit festen Trennstellen – Browser trennen Wörter mit ſ nicht zuverlässig.
 - **Papier:** Pigmenteinschlüsse aus lang-und-rund als Hintergrund, abschaltbar.
-- **Bilder (geplant):** nur Aufmacher und Feuilleton. Stil Holzstich um 1880 – nicht Kupferstich, der war für Zeitungen zu langsam. Das Bau-Script vereinheitlicht jedes Bild zu Druckfarbe auf Papier.
+- **Bilder:** nur Aufmacher und Feuilleton, ohne KI-Hinweis. Stil Holzstich um 1880 – nicht Kupferstich, der war für Zeitungen zu langsam. Der Bot erzeugt das Bild (16:9, auf 3:2 zugeschnitten) und legt es neben die Notiz. Die Seite vereinheitlicht jedes Bild beim Anzeigen: Graustufen werden per Schwellwert zu klaren Linien in der Druckfarbe, das Papier mit den Pigmenten scheint durch, im Dunkelmodus hell auf dunkel. Aufmacher: Bild über die Breite des Kastens; Feuilleton: links über ein Drittel. Keine echten Personen im Bild.
 
 ## Lesen
 
@@ -70,4 +70,3 @@ Nur der Bot läuft nach Uhrzeit; alle anderen reagieren auf das, was davor passi
 - die beiden Bot-Routinen (Recherche, Zustellung) als Prompts
 - Zählscript für `_interessen.md`
 - Wächter und Tailscale-Freigabe für macOS
-- Bilder
