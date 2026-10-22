@@ -1,0 +1,443 @@
+<title>Allgemeines Wochenblatt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Unifraktur Maguntia (historische Fassung) aus lang & rund · SIL OFL 1.1 */
+@font-face{font-family:"LR Maguntia";src:url(data:font/ttf;base64,__FONT_B64__) format("truetype");font-display:swap}
+
+/* Layout: Seitenraster 6 Spalten (Desktop, Kästen randvoll gefüllt) · 4 / 2 / 1 Spalten im Fluss */
+:root{
+  --paper:#eeeadf; --ink:#1b1915; --ink-soft:#4b463c; --hair:#8b8576; --accent:#7a2a1c;
+  --tool-bg:#e2ddd0; --guide:rgba(20,110,160,.10); --guide-line:#2b7ea6;
+  --f-mast:"LR Maguntia",serif;
+  --f-head:"LR Maguntia",serif;
+  --f-antiqua:"Old Standard TT","Times New Roman",Georgia,serif;
+  --f-tool:var(--f-antiqua);
+  --f-body:var(--f-antiqua); --body-size:1.125rem;
+  --gap:1.6rem; --rgap:1.4rem;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1a1916; --ink:#e6e0d1; --ink-soft:#b2ab9b; --hair:#5b564a; --accent:#d9907a;
+  --tool-bg:#252320; --guide:rgba(100,180,230,.12); --guide-line:#6db7dd; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1a1916; --ink:#e6e0d1; --ink-soft:#b2ab9b; --hair:#5b564a; --accent:#d9907a;
+  --tool-bg:#252320; --guide:rgba(100,180,230,.12); --guide-line:#6db7dd; color-scheme:dark}
+
+body{background-color:var(--paper);color:var(--ink);font-family:var(--f-antiqua);background-size:420px 420px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 2.5rem}
+body.fraktur{--f-body:var(--f-head);--body-size:1.375rem}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fr{font-feature-settings:"liga" 1,"clig" 1,"calt" 0;font-variant-ligatures:common-ligatures}
+
+
+.blatt{max-width:1280px;margin:0 auto}
+
+/* Zeitungskopf */
+.kopf{display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem;padding-block:1.25rem .6rem;text-align:center}
+.kopf h1{margin:0;font:400 3rem/1.05 var(--f-head);white-space:nowrap;overflow:hidden}
+.kopf h1 a{display:inline-block}
+.kopf h1 a{text-decoration:none}
+.kopf .zusatz{font:italic 1rem/1.3 var(--f-antiqua);color:var(--ink-soft);margin-top:.35rem;text-wrap:balance}
+
+.zeile{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.2rem 1rem;
+  border-top:4px double var(--ink);border-bottom:1px solid var(--ink);padding:.35rem 0;
+  font-size:.85rem;letter-spacing:.04em;font-variant-numeric:tabular-nums;margin-bottom:var(--rgap)}
+
+/* Raster */
+.raster{position:relative;display:grid;column-gap:var(--gap);row-gap:var(--rgap);overflow:hidden;
+  grid-template-columns:minmax(0,1fr);--cols:1;--bp:"S";
+  grid-template-areas:"auf" "ha1" "ha2" "ha3" "sti" "kur" "feu"}
+@media (min-width:480px){.raster{--cols:2;--bp:"M";grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-areas:"auf auf" "ha1 ha2" "ha3 sti" "kur kur" "feu feu"}}
+@media (min-width:720px){.raster{--cols:4;--bp:"L";grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-areas:"auf auf auf auf" "ha1 ha1 ha2 ha2" "ha3 ha3 sti sti" "kur kur kur kur" "feu feu feu feu"}}
+@media (min-width:1080px){.raster{--cols:6;--bp:"XL";grid-template-columns:repeat(6,minmax(0,1fr));
+  grid-template-rows:repeat(4,minmax(0,1fr)) minmax(0,.8fr);
+  grid-template-areas:"auf auf auf auf ha1 ha1" "auf auf auf auf ha1 ha1" "ha2 ha2 sti sti kur kur" "ha3 ha3 sti sti kur kur" "feu feu feu feu feu feu"}}
+.box{position:relative;min-width:0;min-height:0;z-index:1;display:flex;flex-direction:column;overflow:hidden}
+.box::before{content:"";position:absolute;top:0;bottom:0;left:calc(var(--gap) / -2);border-left:1px solid var(--hair)}
+.raster>.box{overflow:visible}
+.box>.innen{display:flex;flex-direction:column;min-height:0;flex:1 1 auto;overflow:hidden}
+.box::after{content:"";position:absolute;left:calc(var(--gap) / -2);right:calc(var(--gap) / -2);top:calc(var(--rgap) / -2);border-top:1px solid var(--hair)}
+.box[data-typ="feuilleton"]::after{border-top:3px double var(--ink)}
+
+/* Satz */
+.text{font-family:var(--f-body);font-size:var(--body-size);line-height:1.42;text-align:justify;hyphens:manual;-webkit-hyphens:manual}
+.fraktur .text{font-feature-settings:"liga" 1,"clig" 1,"calt" 0;line-height:1.38}
+.text p{margin:0;text-indent:1.2em}.text p:first-child{text-indent:0}
+.spalten{columns:15em;column-gap:var(--gap);column-rule:1px solid var(--hair)}
+.fest .fuell{flex:1 1 0;min-height:0}
+.rubrik{font:italic 700 .9rem/1.1 var(--f-antiqua);letter-spacing:.08em;color:var(--accent);margin:0 0 .45rem}
+.box h2,.box h3{font-family:var(--f-head);font-weight:400;margin:0 0 .55rem;text-wrap:balance;line-height:1.08;font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
+.box h2 a,.box h3 a{text-decoration:none}
+.box h2 a:hover,.box h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.15em}
+.mitte{text-align:center}
+[data-typ="aufmacher"] h2{font-size:clamp(2rem,4.2vw,3.5rem)}
+.unter{font:italic 1.12rem/1.35 var(--f-antiqua);text-align:center;margin:0 auto .8rem;max-width:36em;text-wrap:balance}
+.trenner{border:0;border-top:1px solid var(--ink);width:4rem;margin:0 auto .9rem}
+[data-typ="haupt"] h2{font-size:1.75rem}
+[data-typ="feuilleton"] h2{font-size:1.65rem;text-align:center}
+.weiter{white-space:nowrap;color:var(--accent);text-decoration:none;font-style:italic;font-family:var(--f-antiqua);font-size:.95em}
+.weiter:hover{text-decoration:underline}
+
+.kasten{border:4px double var(--ink);padding:.8rem .95rem;flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.kopfzeile{font-size:1.6rem;text-align:center;border-bottom:1px solid var(--ink);padding-bottom:.45rem}
+.stimme{margin:0 0 .75rem}.stimme:last-child{margin:0}
+.stimme a.wer{font:700 .82rem/1.2 var(--f-antiqua);letter-spacing:.12em;text-decoration:none;color:var(--ink);display:block;margin-bottom:.15rem}
+.stimme a.wer:hover{color:var(--accent)}
+.stimme .text{font-size:calc(var(--body-size) * .95)}
+.kurzliste{columns:14em;column-gap:var(--gap);column-rule:1px solid var(--hair)}
+.kurz{break-inside:avoid;padding-bottom:.65rem;margin-bottom:.65rem;position:relative}
+.kurz::after{content:"";position:absolute;bottom:0;left:35%;right:35%;border-bottom:1px solid var(--hair)}
+.kurz h3{font-size:1.2rem;margin-bottom:.25rem}
+.kurz .text{font-size:calc(var(--body-size) * .92)}
+
+/* Rasteransicht */
+.hilfslinien{position:absolute;inset:0;display:none;grid-template-columns:inherit;column-gap:inherit;pointer-events:none;z-index:0}
+.hilfslinien span{background:var(--guide);border-inline:1px dashed var(--guide-line)}
+.zeigt-raster .hilfslinien{display:grid}
+.etikett{display:none;font:500 .68rem/1.2 var(--f-tool);color:var(--paper);background:var(--guide-line);padding:.2rem .35rem;margin-bottom:.4rem;width:fit-content;border-radius:2px;font-variant-numeric:tabular-nums;flex:none}
+.zeigt-raster .etikett{display:block}
+.zeigt-raster .box{outline:1px solid var(--guide-line);outline-offset:-1px}
+
+/* Detailseite */
+.detail{max-width:1080px;margin:0 auto}
+.zurueck{display:inline-block;font:italic .95rem var(--f-antiqua);color:var(--accent);text-decoration:none}
+.zurueck:hover{text-decoration:underline}
+.detail header{text-align:center;border-bottom:1px solid var(--ink);padding:1rem 0;margin-bottom:1.5rem}
+.detail h2{font:400 clamp(2.2rem,6vw,4.2rem)/1.05 var(--f-head);margin:.2rem 0 .8rem;text-wrap:balance;font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
+.detail .unter{font-size:1.2rem}
+.detail .meta{font:.75rem/1.4 var(--f-tool);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.detail .spalten{columns:19em}
+.detail .text p:first-child::first-letter{float:left;font:400 3.6em/.82 var(--f-head);padding:.08em .1em 0 0}
+.detail .quellen{border-top:1px solid var(--ink);margin-top:1.5rem;padding-top:.75rem;font-size:.85rem;color:var(--ink-soft)}
+.detail nav{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+
+.fuss{max-width:1280px;margin:2rem auto 0;border-top:4px double var(--ink);padding-top:.6rem;font-size:.8rem;color:var(--ink-soft);text-align:center;text-wrap:balance}
+
+.detail .text p:first-child{font-weight:700}
+.fraktur .detail .text p:first-child{font-weight:400;font-size:1.06em}
+[hidden]{display:none!important}
+/* Leiste: links Ausgaben, rechts Einstellungen */
+.leiste{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:.5rem 1rem;padding-block:.7rem .2rem;font:.9rem/1.2 var(--f-antiqua)}
+.ausgaben{display:flex;gap:.2rem 1rem;flex-wrap:wrap;align-items:center}
+.nav{color:var(--ink);text-decoration:none;font-style:italic;white-space:nowrap}
+.nav:hover{color:var(--accent);text-decoration:underline}
+.nav[aria-disabled="true"]{color:var(--hair);pointer-events:none}
+.einst{position:relative}
+#e-knopf{font:inherit;color:var(--ink);background:none;border:1px solid var(--hair);border-radius:2px;padding:.35rem .6rem;cursor:pointer;white-space:nowrap}
+#e-knopf[aria-expanded="true"]{border-color:var(--ink)}
+.panel{position:absolute;right:0;top:calc(100% + .4rem);z-index:20;background:var(--paper);border:3px double var(--ink);padding:.6rem .75rem;display:grid;gap:.45rem;min-width:17rem;max-width:calc(100vw - 32px);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.zeile2{display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+.zeile2>span{font-style:italic;color:var(--ink-soft)}
+.knoepfe{display:flex;gap:.15rem}
+.panel button{font:inherit;color:var(--ink);background:none;border:1px solid transparent;border-radius:2px;padding:.3rem .45rem;cursor:pointer;min-width:2.2rem}
+.panel button:hover{border-color:var(--hair)}
+.panel button[aria-pressed="true"]{border-color:var(--ink)}
+.panel button:disabled{opacity:.35;cursor:default}
+.panel .gross{font-size:1.15em}
+.panel .werk{border-top:1px dashed var(--hair);padding-top:.45rem}
+#bp{font:500 .72rem/1.2 var(--f-tool);color:var(--guide-line);font-variant-numeric:tabular-nums}
+/* Archiv */
+.archiv{max-width:860px;margin:0 auto}
+.archiv h2{font:400 clamp(2rem,5vw,3.2rem)/1.1 var(--f-head);text-align:center;margin:.5rem 0 .3rem}
+.archiv .jg{text-align:center;font-style:italic;color:var(--ink-soft);margin:0 0 1rem}
+.archiv ol{list-style:none;margin:0;padding:0;border-top:4px double var(--ink)}
+.archiv li{border-bottom:1px solid var(--hair)}
+.archiv li a{display:grid;grid-template-columns:3.6rem minmax(0,1fr) auto;gap:.2rem 1rem;padding:.75rem 0;text-decoration:none;align-items:baseline}
+.archiv li a:hover .sz{text-decoration:underline}
+.archiv .nr{font:1.3rem var(--f-head)}
+.archiv .sz{font:1.2rem/1.2 var(--f-head);font-feature-settings:"liga" 1,"clig" 1,"calt" 0}
+.archiv .dt{grid-column:2;font-size:.85rem;color:var(--ink-soft)}
+.archiv .pr{grid-row:1/3;grid-column:3;font-size:.9rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.archiv .neu{font:italic .8rem var(--f-antiqua);color:var(--accent);margin-left:.4rem}
+</style>
+
+<nav class="leiste" aria-label="Ausgaben und Einstellungen">
+  <div class="ausgaben">
+    <a class="nav" href="#archiv">Archiv</a>
+  </div>
+  <div class="einst">
+    <button id="e-knopf" type="button" aria-expanded="false" aria-controls="e-panel">Einstellungen ▾</button>
+    <div id="e-panel" class="panel" hidden>
+      <div class="zeile2"><span>Schrift</span><div class="knoepfe">
+        <button id="s-klein" type="button" aria-label="Schrift kleiner">A−</button>
+        <button id="s-norm" type="button" aria-label="Schrift normal">A</button>
+        <button id="s-gross" type="button" class="gross" aria-label="Schrift größer">A+</button></div></div>
+      <div class="zeile2"><span>Ansicht</span><div class="knoepfe">
+        <button data-thema="light" type="button" aria-pressed="false">Hell</button>
+        <button data-thema="dark" type="button" aria-pressed="false">Dunkel</button>
+        <button data-thema="auto" type="button" aria-pressed="true">Auto</button></div></div>
+      <div class="zeile2"><span>Satz</span><div class="knoepfe">
+        <button id="t-fraktur" type="button" aria-pressed="false">Fraktur mit ſ</button></div></div>
+      <div class="zeile2"><span>Papier</span><div class="knoepfe">
+        <button id="t-papier" type="button" aria-pressed="true">Pigmente</button></div></div>
+      <div class="zeile2 werk"><span>Werkstatt</span><div class="knoepfe">
+        <button id="t-raster" type="button" aria-pressed="false">Raster zeigen</button></div></div>
+      <output id="bp" aria-live="polite">–</output>
+    </div>
+  </div>
+</nav>
+
+<div class="blatt" lang="de">
+  <header class="kopf">
+    <div class="titel">
+      <h1 class="fr"><a href="#" id="titelzug">Allgemeines Wochenblatt</a></h1>
+      <div class="zusatz" id="zusatz"></div>
+    </div>
+  </header>
+  <div class="zeile"><span id="datum"></span><span id="woche"></span><span><span id="ausgabe"></span> · <span id="preis"></span></span></div>
+
+  <main id="deckblatt">
+    <section class="raster" id="raster" aria-label="Deckblatt">
+      <div class="hilfslinien" id="hilfslinien" aria-hidden="true"></div>
+    </section>
+  </main>
+  <article class="detail" id="detail" hidden></article>
+  <section class="archiv" id="archiv" hidden></section>
+</div>
+
+<footer class="fuss" id="fuss"></footer>
+
+<script>/*__PAPER__*/</script>
+<script>/*__DATA__*/</script>
+<script>
+(function(){
+  const D = window.WB, AUS = D.ausgabe, A = D.artikel;
+  const st = { fraktur:false, papier:true, raster:false };
+  const KURZ_SCHWELLE = 30;   // darunter erscheint die Kurzfassung statt des Vorspanns
+  const byId = Object.fromEntries(A.map(a => [a.id, a]));
+  const satzEnde = w => { const x = w.replace(/\u00AD/g, ''); return /[.!?…][“”"»«)]*$/.test(x) && !/^\d+\.$/.test(x) && !/^(z|u|d|bzw|ca|Nr|S|St|Dr)\.$/.test(x); };
+  A.forEach(a => {
+    a.wa = a.pa.map(p => p.split(' ')); a.wf = a.pf.map(p => p.split(' '));
+    a.total = a.wa.reduce((n, p) => n + p.length, 0);
+    a.enden = []; let k = 0;   // Wortpositionen, an denen ein Satz endet
+    a.wa.forEach(p => p.forEach((w, j) => { k++; if (satzEnde(w) || j === p.length - 1) a.enden.push(k); }));
+  });
+  const $ = id => document.getElementById(id);
+  $('preis').textContent = `Preis ${AUS.pfennig}`; $('preis').title = `${AUS.preis} · geschätzt aus ca. ${AUS.token} Token`;
+  $('zusatz').textContent = AUS.untertitel; $('datum').textContent = AUS.datum; $('woche').textContent = AUS.woche; $('ausgabe').textContent = `Ausgabe Nr. ${AUS.nr}`;
+  $('fuss').textContent = `Gesetzt mit lang & rund · Regelwerk-Stand ${D.stand} · Silbentrennung nach hyph-de-1996 · Schriften: Unifraktur Maguntia und Old Standard`;
+
+  /* Vorschautext: Kurzfassung bei kleinen Kästen, sonst Artikelanfang – möglichst am Satzende geschnitten */
+  const weiter = a => ` <a class="weiter" href="#${a.id}">Weiterlesen ☞</a>`;
+  function textHTML(a, n, link){
+    if (link && n < 8) return `<p>${weiter(a).trim()}</p>`;   // kein Platz: nur Überschrift und Verweis
+    if (link && n < KURZ_SCHWELLE) return `<p>${st.fraktur ? a.kf : a.ka}${weiter(a)}</p>`;
+    let ziel = Math.max(0, Math.min(n, a.total)), rest = '';
+    if (ziel < a.total){
+      const s = a.enden.filter(e => e <= ziel).pop() || 0;
+      if (s && (ziel - s <= 15 || s >= ziel * 0.8)) ziel = s; else rest = ' …';
+    }
+    const src = st.fraktur ? a.wf : a.wa, out = []; let r = ziel;
+    for (const p of src){ if (r <= 0) break; const t = p.slice(0, r); r -= t.length; out.push(t.join(' ')); }
+    if (!out.length) out.push('');
+    out[out.length - 1] += rest + (link ? weiter(a) : '');
+    return out.map(p => `<p>${p}</p>`).join('');
+  }
+  const titel = a => a.titelF;   // Überschriften stehen immer in Fraktur
+
+  /* Deckblatt aus der Verteilung des Bau-Scripts */
+  const raster = $('raster');
+  const im = box => A.filter(a => a.box === box);
+  const etikett = '<div class="etikett"></div>';
+  const artikelKasten = (a, typ, area) => {
+    const gross = typ === 'aufmacher' || typ === 'feuilleton';
+    return `<article class="box" data-typ="${typ}" style="grid-area:${area}">${etikett}<div class="innen">
+      <p class="rubrik${gross ? ' mitte' : ''}">${a.rubrik}</p>
+      <h2 class="${typ === 'aufmacher' ? 'mitte' : ''}"><a href="#${a.id}">${titel(a)}</a></h2>
+      ${typ === 'aufmacher' ? `<p class="unter">${a.unter}</p><hr class="trenner">` : ''}
+      <div class="text fuell${gross ? ' spalten' : ''}" data-slot="${a.id}"></div></div></article>`;
+  };
+  let html = '';
+  im('aufmacher').forEach(a => html += artikelKasten(a, 'aufmacher', 'auf'));
+  im('haupt').forEach((a, i) => html += artikelKasten(a, 'haupt', 'ha' + (i + 1)));
+  im('feuilleton').forEach(a => html += artikelKasten(a, 'feuilleton', 'feu'));
+  html += `<aside class="box" data-typ="stimmen" style="grid-area:sti">${etikett}<div class="kasten">
+    <h2 class="kopfzeile">Stimmen der Woche</h2>
+    ${im('stimme').map(a => `<div class="stimme"><a class="wer" href="#${a.id}">${a.wer}</a><div class="text" data-slot="${a.id}"></div></div>`).join('')}
+  </div></aside>`;
+  html += `<section class="box" data-typ="kurz" style="grid-area:kur">${etikett}<div class="innen">
+    <h2 class="kopfzeile">Kurz notiert</h2><div class="kurzliste">
+    ${im('kurz').map(a => `<div class="kurz">${a.rubrik === 'Über den Tellerrand' ? '<p class="rubrik">Über den Tellerrand</p>' : ''}<h3><a href="#${a.id}">${titel(a)}</a></h3><div class="text" data-slot="${a.id}"></div></div>`).join('')}
+  </div></div></section>`;
+  raster.insertAdjacentHTML('beforeend', html);
+  const boxes = [...raster.querySelectorAll('.box')];
+  boxes.forEach(b => { b._slots = [...b.querySelectorAll('[data-slot]')].map(el => ({ el, a: byId[el.dataset.slot], n: 0 })); });
+
+  /* Füllen: jeder Kasten bekommt so viel Text, wie hineinpasst */
+  function setze(box, t, basis){
+    box._slots.forEach(s => { const a = s.a; s.n = basis ? a.base : Math.round(a.min + t * (a.total - a.min)); s.el.innerHTML = textHTML(a, s.n, true); });
+  }
+  function passt(box){
+    const inner = box.querySelector('.innen, .kasten');
+    if (inner.scrollHeight > inner.clientHeight + 1) return false;
+    for (const c of box.querySelectorAll('.spalten')) if (c.scrollWidth > c.clientWidth + 1) return false;
+    return true;
+  }
+  function fuelle(box){
+    setze(box, 0); if (!passt(box)) return false;
+    setze(box, 1); if (passt(box)) return true;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 13; i++){ const m = (lo + hi) / 2; setze(box, m); passt(box) ? lo = m : hi = m; }
+    setze(box, lo);
+    // Restplatz: wichtigere Meldungen (vorne) bekommen zuerst die nächste Stufe
+    if (box._slots.length > 1) for (const sl of box._slots){
+      if (sl.n >= KURZ_SCHWELLE) continue;
+      const alt = sl.n; sl.n = sl.n < 8 ? 20 : KURZ_SCHWELLE; sl.el.innerHTML = textHTML(sl.a, sl.n, true);
+      if (!passt(box)){ sl.n = alt; sl.el.innerHTML = textHTML(sl.a, alt, true); }
+    }
+    return true;
+  }
+  const spalten = () => parseInt(getComputedStyle(raster).getPropertyValue('--cols')) || 1;
+  function titelBreite(){
+    const h = document.querySelector('.kopf h1'), z = $('titelzug');
+    const zwei = innerWidth < 720;   // mobil: zwei Zeilen, beide auf volle Breite
+    if (z.dataset.zeilen !== String(zwei)){ z.dataset.zeilen = String(zwei); z.innerHTML = zwei ? 'Allgemeines<br>Wochenblatt' : 'Allgemeines Wochenblatt'; }
+    h.style.fontSize = '100px';
+    const f = h.clientWidth / z.offsetWidth;
+    h.style.fontSize = Math.max(24, Math.floor(100 * f * 0.995)) + 'px';
+  }
+  function umbruch(){
+    titelBreite();
+    if ($('deckblatt').hidden) return;
+    const cols = spalten();
+    raster.classList.remove('fest'); raster.style.height = ''; boxes.forEach(b => { b.style.height = ''; });
+    boxes.forEach(b => setze(b, 0, true));
+    if (cols === 6){
+      // Seitenmodus: feste Seitenhöhe, alle Kästen randvoll; wächst, falls ein Kasten nicht einmal das Minimum fasst
+      raster.classList.add('fest');
+      let h = Math.round(raster.clientWidth * 0.95);
+      for (let r = 0; r < 20; r++){
+        raster.style.height = h + 'px';
+        if (boxes.map(fuelle).every(Boolean)) break;
+        h = Math.round(h * 1.08);
+      }
+    } else if (cols > 1){
+      // Flussmodus: Zeilenhöhe ergibt sich aus dem höchsten Kasten, die anderen werden bis dorthin aufgefüllt
+      const hoehen = boxes.map(b => b.offsetHeight);
+      boxes.forEach((b, i) => { b.style.height = hoehen[i] + 'px'; });
+      raster.classList.add('fest');
+      boxes.forEach(b => { if (!fuelle(b)) setze(b, 0, true); });
+    }
+    etiketten(cols);
+  }
+
+  /* Werkstatt */
+  const guides = $('hilfslinien'), bp = $('bp');
+  function etiketten(cols){
+    const cs = getComputedStyle(raster);
+    const name = cs.getPropertyValue('--bp').replace(/["'\s]/g,'') || 'S';
+    bp.textContent = `${name} · ${cols} ${cols === 1 ? 'Spalte' : 'Spalten'} · ${window.innerWidth} px`;
+    if (guides.children.length !== cols) guides.innerHTML = '<span></span>'.repeat(cols);
+    const gap = parseFloat(cs.columnGap) || 0, colW = (raster.clientWidth - gap * (cols - 1)) / cols;
+    const namen = { aufmacher:'Aufmacher', haupt:'Hauptartikel', feuilleton:'Feuilleton', stimmen:'Stimmen der Woche', kurz:'Kurz notiert' };
+    boxes.forEach(b => {
+      const span = Math.max(1, Math.round((b.offsetWidth + gap) / (colW + gap)));
+      const kf = b._slots.filter(s => s.n >= 8 && s.n < KURZ_SCHWELLE).length, nu = b._slots.filter(s => s.n < 8).length;
+      const w = b._slots.reduce((n, s) => n + (s.n < KURZ_SCHWELLE ? 0 : Math.min(s.n, s.a.total)), 0);
+      const rel = b._slots.length === 1 ? ` · Relevanz ${b._slots[0].a.relevanz}` : '';
+      b.querySelector('.etikett').textContent = `${namen[b.dataset.typ]}${rel} · ${span}/${cols} Sp. · ${w ? '≈' + w + ' Wörter' : ''}${w && kf ? ' + ' : ''}${kf ? kf + '× Kurzfassung' : ''}${nu ? (w || kf ? ' + ' : '') + nu + '× nur Überschrift' : ''} · ${Math.round(b.offsetWidth)}×${Math.round(b.offsetHeight)} px`;
+    });
+  }
+  const lies = k => { try { return localStorage.getItem(k) } catch(e) { return null } };
+  const schreib = (k, v) => { try { localStorage.setItem(k, v) } catch(e) {} };
+  function schalter(id, key, cls, an){
+    st[key] = an; $(id).setAttribute('aria-pressed', an); schreib('wb-' + key, an ? '1' : '0');
+    if (cls) document.body.classList.toggle(cls, an);
+  }
+  $('t-fraktur').onclick = () => { schalter('t-fraktur', 'fraktur', 'fraktur', !st.fraktur); neu(); };
+  $('t-raster').onclick = () => { schalter('t-raster', 'raster', 'zeigt-raster', !st.raster); umbruch(); };
+  $('t-papier').onclick = () => { schalter('t-papier', 'papier', null, !st.papier); papier(); };
+  if (lies('wb-fraktur') === '1') schalter('t-fraktur', 'fraktur', 'fraktur', true);
+  if (lies('wb-raster') === '1') schalter('t-raster', 'raster', 'zeigt-raster', true);
+  if (lies('wb-papier') === '0') schalter('t-papier', 'papier', null, false);
+
+  /* Einstellungen auf- und zuklappen */
+  const eK = $('e-knopf'), eP = $('e-panel');
+  const panel = auf => { eP.hidden = !auf; eK.setAttribute('aria-expanded', auf); if (auf) etiketten(spalten()); };
+  eK.onclick = e => { e.stopPropagation(); panel(eP.hidden); };
+  document.addEventListener('click', e => { if (!eP.hidden && !eP.contains(e.target)) panel(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !eP.hidden){ panel(false); eK.focus(); } });
+
+  /* Ausgaben-Navigation */
+  const ARCH = D.archiv || [], hier = ARCH.findIndex(x => x.nr === AUS.nr);
+  function navLink(el, x, vor){
+    if (x){ el.href = x.datei; el.textContent = vor ? `☜ Nr. ${x.nr}` : `Nr. ${x.nr} ☞`; el.removeAttribute('aria-disabled'); }
+    else { el.removeAttribute('href'); el.setAttribute('aria-disabled', 'true'); el.textContent = vor ? '☜ Vorige' : 'Nächste ☞'; }
+  }
+
+  /* Leseleiste: Schriftgröße und Hell/Dunkel */
+  const STUFEN = [87.5, 100, 112.5, 125, 140];
+  let stufe = Math.min(4, Math.max(0, parseInt(lies('wb-stufe') ?? '1', 10) || 0));
+  if (lies('wb-stufe') === null) stufe = 1;
+  function groesse(neueStufe){
+    stufe = Math.min(STUFEN.length - 1, Math.max(0, neueStufe)); schreib('wb-stufe', String(stufe));
+    document.documentElement.style.fontSize = STUFEN[stufe] + '%';
+    $('s-klein').disabled = stufe === 0; $('s-gross').disabled = stufe === STUFEN.length - 1;
+    $('s-norm').setAttribute('aria-pressed', stufe === 1);
+  }
+  $('s-klein').onclick = () => { groesse(stufe - 1); umbruch(); };
+  $('s-gross').onclick = () => { groesse(stufe + 1); umbruch(); };
+  $('s-norm').onclick = () => { groesse(1); umbruch(); };
+  groesse(stufe);
+  const root = document.documentElement, ausViewer = root.getAttribute('data-theme');
+  function thema(t){
+    schreib('wb-thema', t);
+    if (t === 'auto'){ if (ausViewer) root.setAttribute('data-theme', ausViewer); else root.removeAttribute('data-theme'); }
+    else root.setAttribute('data-theme', t);
+    document.querySelectorAll('[data-thema]').forEach(b => b.setAttribute('aria-pressed', b.dataset.thema === t));
+  }
+  document.querySelectorAll('[data-thema]').forEach(b => b.onclick = () => thema(b.dataset.thema));
+  thema(lies('wb-thema') || 'auto');
+
+  /* Pigmenteinschlüsse aus lang & rund als wiederholte Papierkachel */
+  function papier(){
+    if (!st.papier || !window.LRPaper){ document.body.style.backgroundImage = 'none'; return; }
+    const c = document.createElement('canvas'), bg = getComputedStyle(document.body).backgroundColor;
+    const p = window.LRPaper.DEFAULT_PAPER_PREFS;
+    window.LRPaper.drawPaperInclusions(c, 420, 420, { form:p.form, size:p.size, opacity:p.opacity, density:p.density, monochrome:p.monochrome, backgroundColor:bg, seed:43 });
+    document.body.style.backgroundImage = `url(${c.toDataURL('image/png')})`;
+  }
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', papier); } catch(e) {}
+  new MutationObserver(papier).observe(root, { attributes:true, attributeFilter:['data-theme'] });
+
+  /* Detailseite */
+  const detail = $('detail'), deck = $('deckblatt'); let merkY = 0;
+  const leserlich = q => /^https?:/.test(q) ? `<a href="${q}" target="_blank" rel="noopener">${q.replace(/^https?:\/\//, '')}</a>` : q;
+  function zeigeDetail(a){
+    const i = A.indexOf(a), next = A[(i + 1) % A.length];
+    detail.innerHTML = `<a class="zurueck" href="#">☜ Zurück zum Deckblatt</a>
+      <header><p class="rubrik">${a.rubrik}</p><h2>${titel(a)}</h2><p class="unter">${a.unter}</p>
+      <div class="meta">Relevanz ${a.relevanz} · ${a.total} Wörter · ca. ${a.token.toLocaleString('de-DE')} Token (geschätzt)</div></header>
+      <div class="text spalten">${textHTML(a, a.total, false)}</div>
+      <div class="quellen"><em>Quellen:</em> ${a.quellen.map(leserlich).join(' · ') || '–'}</div>
+      <nav><a class="zurueck" href="#">☜ Zum Deckblatt</a><a class="zurueck" href="#${next.id}">Nächster Artikel ☞</a></nav>`;
+  }
+  const archiv = $('archiv');
+  function zeigeArchiv(){
+    archiv.innerHTML = `<a class="zurueck" href="#">☜ Zur aktuellen Ausgabe</a>
+      <h2>Archiv</h2><p class="jg">${AUS.jahrgang}. Jahrgang · ${ARCH.length} ${ARCH.length === 1 ? 'Ausgabe' : 'Ausgaben'}</p>
+      <ol>${ARCH.map(x => `<li><a href="${x.nr === AUS.nr ? '#' : x.datei}"><span class="nr">Nr. ${x.nr}</span>
+        <span class="sz">${x.schlagzeile}${x.nr === ARCH[0].nr ? '<span class="neu">neu</span>' : ''}</span>
+        <span class="dt">${x.datum} · ${x.woche}</span><span class="pr">${x.pfennig}</span></a></li>`).join('')}</ol>`;
+  }
+  function route(){
+    const h = location.hash.slice(1);
+    if (h === 'archiv'){ if (!deck.hidden) merkY = scrollY; zeigeArchiv(); deck.hidden = true; detail.hidden = true; archiv.hidden = false; scrollTo(0, 0); return; }
+    archiv.hidden = true;
+    const a = byId[h];
+    if (a){ if (!deck.hidden) merkY = scrollY; zeigeDetail(a); deck.hidden = true; detail.hidden = false; scrollTo(0, 0); }
+    else { const war = deck.hidden; deck.hidden = false; detail.hidden = true; umbruch(); if (war) scrollTo(0, merkY); }
+  }
+  function neu(){ const a = byId[location.hash.slice(1)]; if (a) zeigeDetail(a); umbruch(); }
+  addEventListener('hashchange', () => { panel(false); route(); });
+  let t, letzteBreite = innerWidth;
+  addEventListener('resize', () => { if (innerWidth === letzteBreite) return; letzteBreite = innerWidth; clearTimeout(t); t = setTimeout(umbruch, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(umbruch);
+  papier(); route();
+})();
+</script>
