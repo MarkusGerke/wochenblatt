@@ -1,3 +1,20 @@
+# Nur Grundgerüst und Regeln gehören ins Repo – nie generierte oder individuelle Inhalte.
 dist/
+beispiel/
 node_modules/
 .DS_Store
+
+# Ausgaben, Notizen und Bilder einer Zeitung
+Wochenblatt/
+*-KW[0-9][0-9]*/
+*.html
+!src/template.html
+*.png
+*.jpg
+*.jpeg
+*.webp
+_redaktion.md
+_interessen.md
+_liste.md
+_stand.md
+_fertig.md

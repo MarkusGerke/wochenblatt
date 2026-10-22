@@ -28,7 +28,7 @@ Voraussetzungen: Node.js ≥ 22.18 und das Repo [lang-und-rund](https://github.c
 git clone https://github.com/MarkusGerke/lang-und-rund
 git clone https://github.com/MarkusGerke/wochenblatt
 cd wochenblatt
-npm run build:beispiel        # erzeugt Beispiel-Notizen und baut dist/wochenblatt.html
+npm run build:beispiel        # erzeugt Beispiel-Notizen lokal in beispiel/ und baut dist/wochenblatt.html
 ```
 
 Liegt `lang-und-rund` woanders: `LR_REPO=/pfad/zu/lang-und-rund npm run build`.
@@ -80,8 +80,11 @@ Im Browser füllt die Seite jeden Kasten bis zur letzten Zeile: Große Kästen z
 | `src/paper-extract.mjs` | Pigmenteinschlüsse aus lang-und-rund für den Browser |
 | `src/ts-loader.mjs` | Lädt die TypeScript-Quellen von lang-und-rund direkt in Node |
 | `scripts/beispiel-erzeugen.mjs` | Erzeugt Beispiel-Notizen mit Blindtext |
-| `beispiel/` | Eine Beispiel-Ausgabe, wie der Bot sie ablegt |
 | `docs/konzept.md` | Alle Entscheidungen und ihre Gründe |
+
+## Was nicht ins Repo gehört
+
+Nur Grundgerüst und Regeln liegen hier – keine Ausgaben, Artikel, Bilder oder persönlichen Einstellungen. Beispiel-Notizen erzeugt `npm run beispiel` lokal. Details in [CLAUDE.md](CLAUDE.md).
 
 ## Lizenzen
 
