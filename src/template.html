@@ -499,7 +499,19 @@ em,i{font-style:normal}
   addEventListener('hashchange', () => { panel(false); route(); });
   let t, letzteBreite = innerWidth;
   addEventListener('resize', () => { if (innerWidth === letzteBreite) return; letzteBreite = innerWidth; clearTimeout(t); t = setTimeout(umbruch, 120); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(umbruch);
+  // Schriften kommen teils erst nach dem ersten Umbruch (Google Fonts) – dann neu füllen, sonst laufen Kästen über
+  let tf; const nachSchrift = () => { clearTimeout(tf); tf = setTimeout(umbruch, 60); };
+  if (document.fonts){
+    if (document.fonts.ready) document.fonts.ready.then(nachSchrift);
+    document.fonts.addEventListener && document.fonts.addEventListener('loadingdone', nachSchrift);
+  }
+  // Sicherheitsnetz: läuft ein Kasten über (späte Schrift, Bild, Systemeigenheit), neu umbrechen
+  const laeuftUeber = () => !$('deckblatt').hidden && boxes.some(b => { const i = b.querySelector('.innen, .kasten'); return i && i.scrollHeight > i.clientHeight + 1; });
+  const pruefe = () => { if (laeuftUeber()) umbruch(); };
+  addEventListener('load', () => { nachSchrift(); setTimeout(pruefe, 1000); setTimeout(pruefe, 3000); });
+  document.querySelectorAll('link[rel=stylesheet]').forEach(l => l.addEventListener('load', () => {
+    if (document.fonts) document.fonts.load('1rem "Old Standard TT"').then(nachSchrift, nachSchrift); else nachSchrift();
+  }));
   papier(); route();
   // Web-App: letzte Ausgaben offline vorhalten (nur wenn über HTTPS ausgeliefert, z. B. per Tailscale Serve)
   if (D.webapp && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
